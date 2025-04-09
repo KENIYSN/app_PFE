@@ -26,6 +26,7 @@ export const Theme = {
     // Espacements
     spacing: {
       xxl:150,
+      x1l:100,
       xl: 60,
       lg: 30,
       md: 20,

@@ -24,25 +24,25 @@ export default function Layout() {
         options={{
           title: 'Login',
           headerShown: false,
+          tabBarStyle: { display: 'none' }, // Cache la barre d'onglets
         }}
       />
       <Tabs.Screen
         name="signUp"
         options={{
-    title: 'signUp',
-    headerShown: false,
-  }}
-  
-/>
-<Tabs.Screen
+          title: 'Sign Up',
+          headerShown: false,
+          tabBarStyle: { display: 'none' }, // Cache la barre d'onglets
+        }}
+      />
+      <Tabs.Screen
         name="dashboard"
         options={{
-    title: 'dashboard',
-    headerShown: false,
-  }}
-  />
+          title: 'Dashboard',
+          headerShown: false,
+          tabBarStyle: { display: 'none' }, // Cache la barre d'onglets
+        }}
+      />
     </Tabs>
-    
-    
   );
 }

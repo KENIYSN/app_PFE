@@ -1,16 +1,22 @@
+import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { Theme } from './theme';
 import { useFonts } from 'expo-font';
-import { Link } from 'expo-router';
 import { useRouter } from 'expo-router'; 
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase'; 
 
 export default function LoginScreen() {
-    const router = useRouter(); 
+  const router = useRouter(); 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const [fontsLoaded] = useFonts({
-   'Poppins-Medium': require('../../assets/fonts/Poppins-Medium.ttf'),
-  'Poppins-SemiBold': require('../../assets/fonts/Poppins-SemiBold.ttf'),
-  'Poppins-Bold': require('../../assets/fonts/Poppins-Bold.ttf'),
-});
+    'Poppins-Medium': require('../../assets/fonts/Poppins-Medium.ttf'),
+    'Poppins-SemiBold': require('../../assets/fonts/Poppins-SemiBold.ttf'),
+    'Poppins-Bold': require('../../assets/fonts/Poppins-Bold.ttf'),
+  });
 
   if (!fontsLoaded) {
     return (
@@ -19,7 +25,24 @@ export default function LoginScreen() {
       </View>
     );
   }
-  
+
+  const handleLogin = async () => {
+    if (email === '' || password === '') {
+      alert('Please fill in both fields');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/dashboard');
+    } catch (error) {
+      alert('Login failed: ' + error);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -33,6 +56,8 @@ export default function LoginScreen() {
           placeholderTextColor={Theme.colors.white}
           keyboardType="email-address"
           autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 
@@ -43,20 +68,22 @@ export default function LoginScreen() {
           placeholder="**********"
           placeholderTextColor={Theme.colors.white}
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
       </View>
 
-      <TouchableOpacity style={styles.primaryButton} onPress={() => router.push('/dashboard')} >
-      <Link href="/dashboard" >
-        <Text style={styles.buttonText}>Log in</Text>
-      </Link>
+      <TouchableOpacity style={styles.primaryButton} onPress={handleLogin} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text style={styles.buttonText}>Log in</Text>
+        )}
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.secondaryButton}>
-  <Link href="/signUp" >
-    <Text style={[styles.buttonText, ]}>Sign up</Text>
-  </Link>
-</TouchableOpacity>
+      <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push('/signUp')}>
+        <Text style={styles.buttonText}>Sign up</Text>
+      </TouchableOpacity>
     </View>
   );
 }
